@@ -89,6 +89,8 @@ L.Map.include({
 	_requestFileCopy: function() {
 		if (window.docPermission === 'readonly') {
 			window.postMobileMessage('REQUESTFILECOPY');
+		} else {
+			this._switchToEditMode();
 		}
 	},
 
