@@ -705,12 +705,14 @@ input[type='checkbox']:checked.autofilter, .jsdialog input[type='checkbox']:chec
 }
 
 #busypopup #busyspinner {
-	margin: 20px auto 0px;
+	margin: -20px auto 0px;
 }
 
 #busypopup #busylabel {
 	margin: 20px;
 	text-align: center;
+	font-size: 100%;
+	text-transform: initial;
 }
 
 #busypopup #spinner-paper-g {
