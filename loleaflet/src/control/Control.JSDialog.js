@@ -28,6 +28,10 @@ L.Control.JSDialog = L.Control.extend({
 
 	closeDialog: function(id) {
 		var builder = this.dialogs[id].builder;
+
+		if (this.dialogs[id].type === 'modalpopup')
+			L.DomUtil.remove('jsdialog-overlay');
+
 		L.DomUtil.remove(this.dialogs[id].container);
 		delete this.dialogs[id];
 		builder.callback('dialog', 'close', {id: '__DIALOG__'}, null, builder);
@@ -67,6 +71,8 @@ L.Control.JSDialog = L.Control.extend({
 			L.DomUtil.create('span', 'ui-button-icon ui-icon ui-icon-closethick', button);
 		} else {
 			L.DomUtil.addClass(container, 'modalpopup');
+			var overlay = L.DomUtil.create('div', 'jsdialog-overlay modalpopup', document.body);
+			overlay.id = 'jsdialog-overlay';
 		}
 
 		var content = L.DomUtil.create('div', 'lokdialog ui-dialog-content ui-widget-content', container);
