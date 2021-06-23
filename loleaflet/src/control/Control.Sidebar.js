@@ -85,7 +85,7 @@ L.Control.Sidebar = L.Control.extend({
 		if (data.data.action === 'close') {
 			$('#sidebar-dock-wrapper').hide();
 			$('#sidebar-dock-wrapper').width(0);
-			this.map.options.documentContainer.style.right = '0px';
+			this.map.options.documentContainer.style.width = '100%';
 			this.map._onResize();
 			this.map.dialog._resizeCalcInputBar(0);
 
@@ -105,7 +105,7 @@ L.Control.Sidebar = L.Control.extend({
 			if ($('#sidebar-dock-wrapper').width() != sidebarWidth) {
 				$('#sidebar-dock-wrapper').show();
 				$('#sidebar-dock-wrapper').width(sidebarWidth);
-				this.map.options.documentContainer.style.right = sidebarWidth + 'px';
+				this.map.options.documentContainer.style.width = 'calc(100vw - ' + sidebarWidth + 'px)';
 				this.map._onResize();
 				this.map.dialog._resizeCalcInputBar(sidebarWidth);
 			}
