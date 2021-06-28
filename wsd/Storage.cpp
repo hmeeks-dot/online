@@ -697,7 +697,7 @@ std::unique_ptr<WopiStorage::WOPIFileInfo> WopiStorage::getWOPIFileInfoForUri(Po
             }
             else
             {
-                LOG_TRC("WOPI::CheckFileInfo redirected too many times\n");
+                LOG_WRN("WOPI::CheckFileInfo redirected too many times - URI [" << uriAnonym << "]\n");
             }
         }
 
@@ -790,7 +790,7 @@ std::unique_ptr<WopiStorage::WOPIFileInfo> WopiStorage::getWOPIFileInfo(const Au
                                                                         LockContext& lockCtx)
 {
     Poco::URI uriObject(getUri());
-    return getWOPIFileInfoForUri(uriObject, auth, cookies, lockCtx);
+    return getWOPIFileInfoForUri(uriObject, auth, cookies, lockCtx, RedirectionLimit);
 }
 
 void WopiStorage::WOPIFileInfo::init()
@@ -1009,7 +1009,7 @@ std::string WopiStorage::downloadStorageFileToLocal(const Authorization& auth,
         try
         {
             LOG_INF("WOPI::GetFile template source: " << templateUriAnonym);
-            return downloadDocument(Poco::URI(templateUri), templateUriAnonym, auth, cookies);
+            return downloadDocument(Poco::URI(templateUri), templateUriAnonym, auth, cookies, RedirectionLimit);
         }
         catch (const std::exception& ex)
         {
@@ -1027,7 +1027,7 @@ std::string WopiStorage::downloadStorageFileToLocal(const Authorization& auth,
         try
         {
             LOG_INF("WOPI::GetFile using FileUrl: " << fileUrlAnonym);
-            return downloadDocument(Poco::URI(_fileUrl), fileUrlAnonym, auth, cookies);
+            return downloadDocument(Poco::URI(_fileUrl), fileUrlAnonym, auth, cookies, RedirectionLimit);
         }
         catch (const std::exception& ex)
         {
@@ -1051,7 +1051,7 @@ std::string WopiStorage::downloadStorageFileToLocal(const Authorization& auth,
     try
     {
         LOG_INF("WOPI::GetFile using default URI: " << uriAnonym);
-        return downloadDocument(uriObject, uriAnonym, auth, cookies);
+        return downloadDocument(uriObject, uriAnonym, auth, cookies, RedirectionLimit);
     }
     catch (const Poco::Exception& ex)
     {
