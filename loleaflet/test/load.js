@@ -111,6 +111,18 @@ window.onload = function() {
 					'Bookmark': { 'type': 'string', 'value': bookmark }
 				};
 				window.app.socket.sendMessage('uno .uno:JumpToMark ' + JSON.stringify(cmd));
+				// set a mixed zoom levels: %50, %100, %200
+				// tile sizes:
+				let tileSizes = [7963, 3840, 1852];
+				let zoomLevels = [50, 100, 200];
+				let index = Math.floor(Math.random() * tileSizes.length);
+				// send zoom request
+				console.debug('sending zoom request: %', zoomLevels[index]);
+				let zoomMessage = `message: clientzoom tilepixelwidth=256 tilepixelheight=256 tiletwipwidth=${tileSizes[index]} tiletwipheight=${tileSizes[index]}`;
+				console.debug(zoomMessage);
+				window.app.socket.sendMessage(zoomMessage);
+				await sleep(500);
+				// mesh the keyboard:
 				let dummyInput = 'askdjf ,asdhflkas r;we f;akdn.adh ;o wh;fa he;qw e.fkahsd ;vbawe.kguday;f vas.,mdb kaery kejraerga';
 				map.focus();
 				for (let i = 0; i < dummyInput.length; i++)
