@@ -18,6 +18,16 @@ L.Control.Sidebar = L.Control.extend({
 		this.map.on('sidebar', this.onSidebar, this);
 		this.map.on('jsdialogupdate', this.onJSUpdate, this);
 		this.map.on('jsdialogaction', this.onJSAction, this);
+		this.map.on('commandstatechanged', this._onCommandStateChanged, this);
+	},
+
+	_onCommandStateChanged: function (e) {
+		if (e.commandName === '.uno:ModifyPage' && (e.state === false || e.state === 'false')) {
+			this.closeSidebar();
+		}
+		else if (e.commandName === '.uno:ModifyPage' && (e.state === true || e.state === 'true')) {
+			this.openSideBar();
+		}
 	},
 
 	onRemove: function() {
@@ -76,46 +86,56 @@ L.Control.Sidebar = L.Control.extend({
 		this.builder.executeAction(this.container, data.data);
 	},
 
-	onSidebar: function(data) {
+	closeSidebar: function () {
+		$('#sidebar-dock-wrapper').hide();
+		$('#sidebar-dock-wrapper').width(0);
+		this.map.options.documentContainer.style.width = '100%';
+		this.map._onResize();
+		this.map.dialog._resizeCalcInputBar(0);
+
+		if (!this.map.editorHasFocus()) {
+			this.map.fire('editorgotfocus');
+			this.map.focus();
+		}
+
+		$('#document-container').addClass('sidebar-closed');
+
+		if (window.initSidebarState)
+			this.map.uiManager.setSavedState('ShowSidebar', false);
+	},
+
+	openSideBar: function () {
 		var sidebarWidth = 335;
 
+		if ($('#sidebar-dock-wrapper').width() != sidebarWidth) {
+			$('#sidebar-dock-wrapper').show();
+			$('#sidebar-dock-wrapper').width(sidebarWidth);
+			this.map.options.documentContainer.style.width = 'calc(100vw - ' + sidebarWidth + 'px)';
+			this.map._onResize();
+			this.map.dialog._resizeCalcInputBar(sidebarWidth);
+		}
+
+		$('#document-container').removeClass('sidebar-closed');
+
+		if (window.initSidebarState)
+			this.map.uiManager.setSavedState('ShowSidebar', true);
+	},
+
+	onSidebar: function(data) {
 		this.builder.setWindowId(data.data.id);
 		$(this.container).empty();
 
 		if (data.data.action === 'close') {
-			$('#sidebar-dock-wrapper').hide();
-			$('#sidebar-dock-wrapper').width(0);
-			this.map.options.documentContainer.style.width = '100%';
-			this.map._onResize();
-			this.map.dialog._resizeCalcInputBar(0);
-
-			if (!this.map.editorHasFocus()) {
-				this.map.fire('editorgotfocus');
-				this.map.focus();
-			}
-
-			$('#document-container').addClass('sidebar-closed');
-
-			if (window.initSidebarState)
-				this.map.uiManager.setSavedState('ShowSidebar', false);
+			this.closeSidebar();
 		} else {
 			if (data.data.children && data.data.children.length && data.data.children[0].type !== 'deck')
 				data.data.children.splice(0, 1);
 
-			if ($('#sidebar-dock-wrapper').width() != sidebarWidth) {
-				$('#sidebar-dock-wrapper').show();
-				$('#sidebar-dock-wrapper').width(sidebarWidth);
-				this.map.options.documentContainer.style.width = 'calc(100vw - ' + sidebarWidth + 'px)';
-				this.map._onResize();
-				this.map.dialog._resizeCalcInputBar(sidebarWidth);
-			}
-
 			this.builder.build(this.container, [data.data]);
 
-			$('#document-container').removeClass('sidebar-closed');
-
-			if (window.initSidebarState)
-				this.map.uiManager.setSavedState('ShowSidebar', true);
+			if (this.map.uiManager.getSavedStateOrDefault('ShowSidebar')) {
+				this.openSideBar();
+			}
 		}
 	},
 
