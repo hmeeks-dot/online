@@ -22,11 +22,15 @@ L.Control.Sidebar = L.Control.extend({
 	},
 
 	_onCommandStateChanged: function (e) {
-		if (e.commandName === '.uno:ModifyPage' && (e.state === false || e.state === 'false')) {
-			this.closeSidebar();
-		}
-		else if (e.commandName === '.uno:ModifyPage' && (e.state === true || e.state === 'true')) {
-			this.openSideBar();
+		var relatedToSidebar = e.commandName === '.uno:ModifyPage' || e.commandName === '.uno:Sidebar';
+
+		if (relatedToSidebar) {
+			if (e.state === false || e.state === 'false') {
+				this.closeSidebar();
+			}
+			else if (e.state === true || e.state === 'true') {
+				this.openSideBar();
+			}
 		}
 	},
 
