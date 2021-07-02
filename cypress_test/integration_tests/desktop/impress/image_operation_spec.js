@@ -22,7 +22,7 @@ describe('Image Operation Tests', function() {
 		//close sidebar because it is covering other elements
 		cy.get('#toolbar-up > .w2ui-scroll-right').click();
 
-		cy.get('#tb_editbar_item_modifypage').click();
+		//cy.get('#tb_editbar_item_modifypage').click();
 
 		deleteImage();
 	});
